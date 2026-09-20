@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "Text-to-Speech API",
+    "description": "Requests for testing the Flask TTS backend (spec section 18 - API Testing).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Get Voices",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/voices"
+      }
+    },
+    {
+      "name": "Generate Speech - Valid",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Welcome to our application.\",\n  \"language\": \"en-US\",\n  \"voice\": \"en-US-female-1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Generate Speech - Empty Text (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"\",\n  \"language\": \"en-US\",\n  \"voice\": \"en-US-female-1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Generate Speech - Invalid Language (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Hello\",\n  \"language\": \"xx-XX\",\n  \"voice\": \"foo\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Generate Speech - Voice/Language Mismatch (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Hello\",\n  \"language\": \"en-US\",\n  \"voice\": \"fr-FR-female-1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Generate Speech - Excessively Long Text (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"REPLACE_WITH_1001_PLUS_CHARACTERS\",\n  \"language\": \"en-US\",\n  \"voice\": \"en-US-female-1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Generate Speech - Wrong Content-Type (expect 400)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/tts",
+        "body": {
+          "mode": "raw",
+          "raw": "text=Hello&language=en-US&voice=en-US-female-1"
+        }
+      }
+    },
+    {
+      "name": "Not Found Route (expect 404)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/does-not-exist"
+      }
+    },
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get History (requires Bearer token)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/history"
+      }
+    },
+    {
+      "name": "Get Favorites (requires Bearer token)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/favorites"
+      }
+    },
+    {
+      "name": "Enhance Text - Cleanup",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/enhance",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"hello   world .this is messy\",\n  \"mode\": \"cleanup\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Enhance Text - Invalid Mode (expect 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/enhance",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"hi\",\n  \"mode\": \"bogus\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Upload File (form-data, key 'file')",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/upload",
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "file", "type": "file", "src": "" }]
+        }
+      }
+    }
+  ]
+}
